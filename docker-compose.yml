@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # 1. The Core Application (The Expedition API Service)
+  # This is the service you will build during the training.
+  expedition-api-service:
+    container_name: expedition-api-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - training-database
+      - external-legacy-api
+    environment:
+      # --- LAB 1 Dependency (Database) ---
+      SPRING_DATASOURCE_URL: jdbc:postgresql://training-database:5432/trainingdb
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: password
+
+      # --- LAB 4 Dependency (External API) ---
+      EXTERNAL_API_URL: http://external-legacy-api:8080
+
+  # 2. PostgreSQL Database (For Persistence/CRUD in LAB 1)
+  training-database:
+    container_name: training-database
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: trainingdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 3. Mocked External API (Simulates any Legacy System for LAB 4)
+  external-legacy-api:
+    container_name: external-legacy-api-mock
+    image: wiremock/wiremock:3.7.0
+    ports:
+      - "8081:8080" # Host 8081 -> Container 8080
+    volumes:
+      - ./mock-data/wiremock:/home/wiremock
+
+volumes:
+  # Define the volume for the PostgreSQL data
+  postgres_data:
