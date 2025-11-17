@@ -1,0 +1,35 @@
+meta {
+  name: Create Expedition
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:8080/api/v1/expeditions
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "destination": "Marseille",
+    "weight": 19.5,
+    "status": "PENDING"
+  }
+}
+
+tests {
+  test("Response status is 201 Created", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+
+  test("Response content check", function() {
+    expect(res.getBody().destination).to.equal("Lyon");
+    expect(res.getBody().status).to.equal("PENDING");
+  });
+}
+
+script:post-response {
+  // Sauvegarde l'ID dans une variable de collection pour les requêtes suivantes
+  bru.setVar("newId", res.getBody().id);
+}

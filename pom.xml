@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>tech.ippon.formation.restapi</groupId>
-	<artifactId>expedition-api-service</artifactId>
+	<artifactId>shipment-api-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>expedition-api-service</name>
+	<name>shipment-api-service</name>
 	<description>Dornach Training Project</description>
 	<url/>
 	<licenses>
