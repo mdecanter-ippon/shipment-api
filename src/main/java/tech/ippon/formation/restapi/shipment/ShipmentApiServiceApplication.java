@@ -1,13 +1,13 @@
-package tech.ippon.formation.restapi.expedition;
+package tech.ippon.formation.restapi.shipment;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ExpeditionApiServiceApplication {
+public class ShipmentApiServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ExpeditionApiServiceApplication.class, args);
+		SpringApplication.run(ShipmentApiServiceApplication.class, args);
 	}
 
 }
