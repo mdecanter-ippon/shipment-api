@@ -1,10 +1,10 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  # 1. The Core Application (The Expedition API Service)
+  # 1. The Core Application (The Shipment API Service)
   # This is the service you will build during the training.
-  expedition-api-service:
-    container_name: expedition-api-service
+  shipment-api-service:
+    container_name: shipment-api-service
     build:
       context: .
       dockerfile: Dockerfile
