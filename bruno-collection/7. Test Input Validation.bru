@@ -1,0 +1,38 @@
+meta {
+  name: Test Input Validation
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8080/api/v1/shipments
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "destination_city": "",
+    "weight_kg": -10.5,
+    "status": null,
+    "shipping_date": "25-12-2023"
+  }
+}
+
+tests {
+  test("Response status is 400 Bad Request", function() {
+    expect(res.getStatus()).to.equal(400);
+  });
+  
+  test("Should contain validation error for Destination", function() {
+    expect(res.getBody().destination).to.equal("Destination city is mandatory");
+  });
+  
+  test("Should contain validation error for Weight", function() {
+    expect(res.getBody().weight).to.equal("Weight must be positive");
+  });
+  
+  test("Should contain validation error for Status", function() {
+    expect(res.getBody().status).to.equal("Status is mandatory");
+  });
+}
