@@ -1,0 +1,30 @@
+meta {
+  name: Test Legacy Timeout (Tokyo)
+  type: http
+  seq: 9
+}
+
+post {
+  url: http://localhost:8080/api/v1/shipments
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "destination_city": "Tokyo",
+    "weight_kg": 50.0,
+    "status": "PENDING",
+    "shipping_date": "25-12-2023"
+  }
+}
+
+tests {
+  test("Response status is 201 Created (Graceful Degradation)", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Resilience Check: Request MUST fail fast (< 3s)", function() {
+    expect(res.responseTime).to.be.below(3000);
+  });
+}

@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/legacy/shipments"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "legacy_id": "LEG-9999",
+      "status": "RECEIVED",
+      "message": "Shipment registered in Mainframe."
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "priority": 1,
+  "request": {
+    "method": "POST",
+    "url": "/legacy/shipments",
+    "bodyPatterns": [
+      {
+        "contains": "Tokyo"
+      }
+    ]
+  },
+  "response": {
+    "status": 200,
+    "fixedDelayMilliseconds": 10000,
+    "jsonBody": {
+      "legacy_id": "LEG-TOKYO-SLOW",
+      "status": "DELAYED",
+      "message": "Processed after heavy load."
+    }
+  }
+}

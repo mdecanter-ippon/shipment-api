@@ -1,0 +1,30 @@
+meta {
+  name: Test Legacy Success (Paris)
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:8080/api/v1/shipments
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "destination_city": "Paris",
+    "weight_kg": 10.0,
+    "status": "PENDING",
+    "shipping_date": "25-12-2023"
+  }
+}
+
+tests {
+  test("Response status is 201 Created", function() {
+    expect(res.getStatus()).to.equal(201);
+  });
+  
+  test("Expedition is saved", function() {
+     expect(res.getBody().expedition_id).to.not.be.undefined;
+  });
+}
