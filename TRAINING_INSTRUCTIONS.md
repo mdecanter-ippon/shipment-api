@@ -2,147 +2,102 @@
 
 ## Lab 1: Basic CRUD (Recap)
 
-In this lab, you established the foundation of the Shipment API.
+- **Setup**: Created `Shipment` entity and `ShipmentController`.
+- **Implementation**: Implemented GET and POST endpoints.
+- **Bonuses**: "Handle with Care" (fragile field) and "Teapot Challenge".
 
-### 1.0 Setup
+## Lab 2: Enums and JSON (Recap)
 
-- **Domain**: Created `Shipment` entity with fields: `id`, `destination`, `weight`, `status`.
-- **DTOs**:
-    - `ShipmentSummaryDto` with fields: `id`, `destination`, `weight`
-    - `ShipmentDetailDto` with fields: `id`, `destination`, `weight`, `status`
-- **Mapper**: Created `ShipmentMapper` to convert between entities and DTOs.
-- **Service**: Created `ShipmentService` to handle business logic.
-- **Controller**: Created `ShipmentController` with `@RestController`.
-
-### 1.1 Implementation
-
-- **Endpoints**:
-    - Implemented `GET /api/v1/shipments`
-    - Implemented `GET /api/v1/shipments/{id}`
-    - Implemented `POST /api/v1/shipments`
-- **DTO Usage**:
-    - `GET /shipments` returns `ShipmentSummaryDto`
-    - `GET /shipments/{id}` returns `ShipmentDetailDto`
-    - `POST /shipments` accepts and returns `ShipmentDetailDto`
-- **Error Handling**:
-    - Returned 404 if ID not found.
-
-
-## Lab 2: JSON Mapping and Data Binding
-
-**Goal**: Implement automated mapping of JSON data to Java objects (DTOs) and vice-versa.
-
-**Why?**
-
-- **Integrity**: Consistent mapping ensures data integrity.
-- **Contract**: DTOs define the API contract.
-- **Efficiency**: Automated mapping avoids manual parsing.
-
-## Lab 2.1: POJO–JSON Bridge
-
-We will use **Jackson annotations on DTOs** to control JSON serialization and deserialization.
-
-### Step 1: Protect against unknown fields
-
-Clients might send extra fields that the API does not expect.
-
-1. Open `ShipmentDetailDto`.
-2. Add the `@JsonIgnoreProperties` annotation at class level.
-
-```java
-@Entity
-@Getter @Setter
-@JsonIgnoreProperties(ignoreUnknown = true)  // <--- Add this
-```
-
-#### Step 2: Custom Field Mapping
-
-Sometimes the JSON keys (snake_case) don't match our Java variable names (camelCase). Use `@JsonProperty` to map them.
-
-1. Map the `id` field to `shipment_id`.
-2. Map the `destination` field to `destination_city`.
-3. Map the `weight` field to `weight_kg`.
-
-```java
-@JsonProperty("shipment_id")
-private Long id;
-
-@JsonProperty("destination_city")
-private String destination;
-
-@JsonProperty("weight_kg")
-private Double weight;
-```
-> **Why?** This decouples your internal Java naming conventions from the external public API contract.
-
-### Bonus Exercise (2.1): The Legacy Alias
-Sometimes, clients send data with old field names.
-
-1.  Add `@JsonAlias("weight_lbs")` to your `weight` field.
-2.  Try sending a POST request with `weight_lbs` instead of `weight_kg`.
-3.  Verify that it is correctly mapped to the `weight` Java field.
+- **Enums**: Created `ShipmentStatus` (`PLANNED`, `CONFIRMED`, `SHIPPED`, `DELIVERED`).
+- **JSON**: Used `@JsonValue` for serialization and `@JsonCreator` for deserialization.
+- **Bonus**: Custom JSON output (lowercase).
 
 ---
 
-## Lab 2.2: Serialization & Deserialization
+## Lab 3: Validation and API Documentation
 
-### Task 1: Deserialization (The Request)
+**Objective**: Implement constraint-based validation on the API input (DTO/POJO) to automatically reject invalid requests, and generate a live, interactive contract (Swagger UI) from your Java code.
 
-**Goal**: Verify that the server correctly reads JSON sent by the client.
+### Lab 3.1: Java Bean Validation (Theory)
 
-1.  **Action**: Create a `POST` request to `http://localhost:8080/api/v1/shipments`.
-2.  **Body**: Send the following JSON:
-    ```json
-    {
-      "destination_city": "New York",
-      "weight_kg": 12.5,
-      "status": "PENDING",
-      "useless_field": "ignore_me"
-    }
-    ```
-3.  **Verification**:
-    - The server should return `201 Created`.
-    - The response should contain the data you sent (mapped back to Java fields).
-    - The `useless_field` should be ignored (thanks to `@JsonIgnoreProperties`).
+We use the **Jakarta Bean Validation** standard (e.g., Hibernate Validator) which integrates directly with Spring Boot.
 
-#### Task 2: Serialization (The Response)
+**Key Annotations:**
 
-**Goal**: Verify that the server generates the correct JSON format.
+- `@NotNull`: Must not be null.
+- `@Size(min=, max=)`: For strings, collections.
+- `@Pattern(regexp=)`: For complex formats (e.g., "EXP-XXXX").
+- `@Positive`: For numbers.
 
-1.  **Action**: Create a `GET` request to `http://localhost:8080/api/v1/shipments`.
-2.  **Verification**: Check the JSON response keys.
-    - You should see `shipment_id`, `destination_city`, and `weight_kg`.
-    - You should **NOT** see `id`, `destination`, or `weight`.
-    
-> **Hint**: If you see `id` instead of `shipment_id`, ensure you imported `@JsonProperty` from `com.fasterxml.jackson.annotation`.
+**Triggering Validation**: Add the `@Valid` annotation in the Controller method signature, next to `@RequestBody`.
 
-3. Verify:
-    - Response status is `201 Created`
-    - Unknown field is ignored
+### Lab 3.2: Exercise - Implementing Validation
 
-#### Task 3: Using Enums for Status
+#### Task 1: Add Validation
 
-**Goal**: Improve type safety by replacing the String status with an Enum.
+Add validation annotations to the fields of your `Shipment` POJO.
 
-1.  **Create Enum**: Create `ExpeditionStatus` enum with values `PLANNED`, `CONFIRMED`, `SHIPPED`, `DELIVERED`.
-2.  **Refactor**: Update `Shipment` class to use `ExpeditionStatus` instead of `String`.
-3.  **Verify**: Try to create a shipment with an invalid status (e.g., "LOST"). It should fail (400 Bad Request).
+1.  Open `Shipment.java`.
+2.  Add `@NotBlank` to `destination`.
+3.  Add `@Positive` to `weight`.
+4.  Add `@NotNull` to `status`.
 
-#### Task 4: Hiding Sensitive Data
+#### Task 2: Enable Validation
 
-**Goal**: Prevent sensitive internal data from being exposed in the API response.
+Add the `@Valid` annotation to the `POST /shipments` method in your Controller.
 
-1.  **Add Field**: Add a `String investigationCode` field to your `Shipment` class.
-2.  **Annotate**: Add `@JsonIgnore` to this field.
-3.  **Verify**:
-    - Set a value for `investigationCode` (e.g., "SECRET-123").
-    - Call `GET /shipments`.
-    - Ensure `investigationCode` is **NOT** present in the JSON response.
+```java
+public Shipment createShipment(@Valid @RequestBody Shipment shipment) { ... }
+```
 
-#### Task 5: Custom Date Formatting
+#### Task 3: Handle Errors
 
-**Goal**: Control how dates are serialized in the API response.
+Implement a Global Exception Handler to catch `MethodArgumentNotValidException` and return a clean JSON error list with a 400 Bad Request status.
 
-1.  Add a `LocalDate shippingDate` field to `Shipment`.
-2.  Use `@JsonFormat(pattern = "dd-MM-yyyy")` to enforce a specific format.
-3.  Verify in Bruno that the date appears as "25-12-2023".
+1.  Create `GlobalExceptionHandler` with `@RestControllerAdvice`.
+2.  Add an `@ExceptionHandler` for `MethodArgumentNotValidException`.
+3.  Return a `Map<String, String>` of field errors.
+
+### Lab 3.3: API Documentation (Theory)
+
+We use the **OpenAPI Specification (OAS)** to create a live, interactive contract. **SpringDoc** is the standard library that scans your Spring Boot code to generate this documentation automatically.
+
+**Key Annotations:**
+
+- `@Tag`: Groups endpoints logically (e.g., "Shipment Management").
+- `@Operation`: Adds a human-readable summary ("Creates a new shipment").
+- `@ApiResponse`: Explicitly documents errors (201, 400, 404) that Spring doesn’t guess.
+
+**Activation**: Simply add the dependency. The documentation is auto-generated at `/swagger-ui.html`.
+
+### Lab 3.4: Exercise - Implementing SpringDoc
+
+#### Task 1: Install
+
+Add the `springdoc-openapi-starter-webmvc-ui` dependency (version 2.8.14+) to your `pom.xml` and restart the application.
+
+```xml
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    <version>2.8.14</version>
+</dependency>
+```
+
+#### Task 2: Document
+
+Annotate the `ShipmentController`.
+
+1.  Add `@Tag` to the class level: `@Tag(name = "Shipment API", description = "...")`.
+2.  Describe the `createShipment` method using `@Operation` and `@ApiResponse` (documenting the 201 and 400 codes).
+
+#### Task 3: Verify
+
+1.  Open Swagger UI: `http://localhost:8080/swagger-ui.html`.
+2.  Use the "Try it out" button to send an invalid request.
+3.  Verify that the 400 Bad Request error is correctly documented and returned.
+
+### Bonus Exercises (Lab 3)
+
+- **Custom Error Structure**: Instead of a simple Map, return a custom `ApiError` object (timestamp, status, errors, path).
+- **Production Ready**: Configure `application.properties` to disable Swagger UI in production (`springdoc.swagger-ui.enabled=false`).
