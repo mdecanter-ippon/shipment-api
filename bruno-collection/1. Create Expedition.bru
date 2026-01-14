@@ -12,9 +12,10 @@ post {
 
 body:json {
   {
-    "destination": "Marseille",
-    "weight": 19.5,
-    "status": "PENDING"
+    "destination_city": "Marseille",
+    "weight_kg": 19.5,
+    "status": "PENDING",
+    "shipping_date": "25-12-2023"
   }
 }
 
@@ -23,13 +24,19 @@ tests {
     expect(res.getStatus()).to.equal(201);
   });
 
-  test("Response content check", function() {
-    expect(res.getBody().destination).to.equal("Lyon");
-    expect(res.getBody().status).to.equal("PENDING");
+  test("JSON Contract Check", function() {
+    const body = res.getBody();
+
+    expect(body.destination_city).to.equal("Marseille");
+    expect(body.weight_kg).to.equal(19.5);
+
+    expect(body.shipping_date).to.equal("25-12-2023");
+
+    expect(body.investigationCode).to.be.undefined;
+    expect(body.investigation_code).to.be.undefined;
   });
 }
 
 script:post-response {
-  // Sauvegarde l'ID dans une variable de collection pour les requêtes suivantes
-  bru.setVar("newId", res.getBody().id);
+  bru.setVar("newId", res.getBody().expedition_id);
 }

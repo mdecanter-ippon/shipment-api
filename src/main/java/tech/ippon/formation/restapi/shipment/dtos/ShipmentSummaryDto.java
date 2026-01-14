@@ -1,41 +1,36 @@
 package tech.ippon.formation.restapi.shipment.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShipmentSummaryDto {
 
+    @JsonProperty("expedition_id")
     private Long id;
+
+    @JsonProperty("destination_city")
     private String destination;
+
+    @JsonProperty("weight_kg")
     private Double weight;
 
-    public ShipmentSummaryDto() {
-    }
+    @JsonProperty("shipping_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate shippingDate;
 
     public ShipmentSummaryDto(Long id, String destination, Double weight) {
         this.id = id;
         this.destination = destination;
-        this.weight = weight;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public Double getWeight() {
-        return weight;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public void setWeight(Double weight) {
         this.weight = weight;
     }
 }

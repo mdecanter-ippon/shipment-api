@@ -12,7 +12,8 @@ public class ShipmentMapper {
         return new ShipmentSummaryDto(
                 shipment.getId(),
                 shipment.getDestination(),
-                shipment.getWeight()
+                shipment.getWeight(),
+                shipment.getShippingDate()
         );
     }
 
@@ -21,7 +22,8 @@ public class ShipmentMapper {
                 shipment.getId(),
                 shipment.getDestination(),
                 shipment.getWeight(),
-                shipment.getStatus()
+                shipment.getStatus(),
+                shipment.getShippingDate()
         );
     }
 
@@ -31,6 +33,7 @@ public class ShipmentMapper {
         shipment.setDestination(shipmentDetailDto.getDestination());
         shipment.setWeight(shipmentDetailDto.getWeight());
         shipment.setStatus(shipmentDetailDto.getStatus());
+        shipment.setShippingDate(shipmentDetailDto.getShippingDate());
         return shipment;
     }
 

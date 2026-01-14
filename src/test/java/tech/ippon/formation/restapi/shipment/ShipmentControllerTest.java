@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tech.ippon.formation.restapi.shipment.controllers.ShipmentController;
 import tech.ippon.formation.restapi.shipment.dtos.ShipmentDetailDto;
 import tech.ippon.formation.restapi.shipment.dtos.ShipmentSummaryDto;
+import tech.ippon.formation.restapi.shipment.enums.ShipmentStatus;
 import tech.ippon.formation.restapi.shipment.mappers.ShipmentMapper;
 import tech.ippon.formation.restapi.shipment.models.Shipment;
 import tech.ippon.formation.restapi.shipment.services.ShipmentService;
@@ -44,6 +45,7 @@ class ShipmentControllerTest {
         shipment.setId(1L);
         shipment.setDestination("Paris");
         shipment.setWeight(5.0);
+        shipment.setStatus(ShipmentStatus.PENDING);
 
         ShipmentSummaryDto summaryDto =
                 new ShipmentSummaryDto(1L, "Paris", 5.0);
@@ -53,28 +55,28 @@ class ShipmentControllerTest {
 
         mockMvc.perform(get("/api/v1/shipments"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].destination").value("Paris"))
-                .andExpect(jsonPath("$[0].weight").value(5.0));
+                .andExpect(jsonPath("$[0].destination_city").value("Paris"))
+                .andExpect(jsonPath("$[0].weight_kg").value(5.0));
     }
 
     @Test
     void shouldCreateShipment() throws Exception {
         ShipmentDetailDto inputDto =
-                new ShipmentDetailDto(null, "Lyon", 10.5, "PENDING");
+                new ShipmentDetailDto(null, "Lyon", 10.5, ShipmentStatus.PENDING);
 
         Shipment entity = new Shipment();
         entity.setDestination("Lyon");
         entity.setWeight(10.5);
-        entity.setStatus("PENDING");
+        entity.setStatus(ShipmentStatus.PENDING);
 
         Shipment saved = new Shipment();
         saved.setId(123L);
         saved.setDestination("Lyon");
         saved.setWeight(10.5);
-        saved.setStatus("PENDING");
+        saved.setStatus(ShipmentStatus.PENDING);
 
         ShipmentDetailDto outputDto =
-                new ShipmentDetailDto(123L, "Lyon", 10.5, "PENDING");
+                new ShipmentDetailDto(123L, "Lyon", 10.5, ShipmentStatus.PENDING);
 
         when(mapper.toEntity(any(ShipmentDetailDto.class))).thenReturn(entity);
         when(service.create(any(Shipment.class))).thenReturn(saved);
@@ -84,8 +86,8 @@ class ShipmentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(inputDto)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(123))
-                .andExpect(jsonPath("$.destination").value("Lyon"));
+                .andExpect(jsonPath("$.expedition_id").value(123))
+                .andExpect(jsonPath("$.destination_city").value("Lyon"));
     }
 
     @Test

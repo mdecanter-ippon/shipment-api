@@ -1,53 +1,43 @@
 package tech.ippon.formation.restapi.shipment.dtos;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import tech.ippon.formation.restapi.shipment.enums.ShipmentStatus;
 
+import java.time.LocalDate;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ShipmentDetailDto {
 
+    @JsonProperty("expedition_id")
     private Long id;
+
+    @JsonProperty("destination_city")
     private String destination;
+
+    @JsonProperty("weight_kg")
     private Double weight;
-    private String status;
 
-    public ShipmentDetailDto() {
-    }
+    @Enumerated(EnumType.STRING)
+    private ShipmentStatus status;
 
-    public ShipmentDetailDto(Long id, String destination, Double weight, String status) {
+    @JsonProperty("shipping_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    private LocalDate shippingDate;
+
+    public ShipmentDetailDto(Long id, String destination, Double weight, ShipmentStatus status) {
         this.id = id;
         this.destination = destination;
         this.weight = weight;
-        this.status = status;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public Double getWeight() {
-        return weight;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public void setWeight(Double weight) {
-        this.weight = weight;
-    }
-
-    public void setStatus(String status) {
         this.status = status;
     }
 }
