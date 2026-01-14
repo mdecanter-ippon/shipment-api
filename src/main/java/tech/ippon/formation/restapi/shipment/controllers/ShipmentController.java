@@ -16,13 +16,11 @@ public class ShipmentController {
     private final ShipmentService service;
     private final ShipmentMapper mapper;
 
-    // Injection de dépendance par constructeur (Best Practice)
     public ShipmentController(ShipmentService service, ShipmentMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }
 
-    // 1. GET - Récupérer la liste
     @GetMapping
     public List<ShipmentSummaryDto> getAllShipments() {
         return service.findAll()
@@ -32,14 +30,12 @@ public class ShipmentController {
     }
 
 
-    // 2. GET {id} - Récupérer une ressource unique (avec gestion 404)
     @GetMapping("/{id}")
     public ShipmentDetailDto getShipmentById(@PathVariable Long id) {
         return mapper.toDetailDto(service.findById(id));
     }
 
 
-    // 3. POST - Créer une ressource (Retourne 201 Created)
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ShipmentDetailDto createShipment(@RequestBody ShipmentDetailDto dto) {
