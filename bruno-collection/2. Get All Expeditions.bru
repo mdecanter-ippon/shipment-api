@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: http://localhost:8080/api/v1/expeditions
+  url: http://localhost:8080/api/v1/shipments
   body: none
   auth: none
 }
@@ -14,9 +14,14 @@ tests {
   test("Response status is 200 OK", function() {
     expect(res.getStatus()).to.equal(200);
   });
-
+  
   test("List should not be empty", function() {
-    // Vérifie que le tableau contient au moins un élément
     expect(res.getBody().length).to.be.above(0);
+  });
+  
+  test("First element has correct contract", function() {
+    const firstItem = res.getBody()[0];
+    expect(firstItem.expedition_id).to.not.be.undefined;
+    expect(firstItem.destination_city).to.not.be.undefined;
   });
 }
