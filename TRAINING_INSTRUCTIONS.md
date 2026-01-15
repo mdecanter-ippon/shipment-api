@@ -35,9 +35,9 @@ We use the **Jakarta Bean Validation** standard (e.g., Hibernate Validator) whic
 
 #### Task 1: Add Validation
 
-Add validation annotations to the fields of your `Shipment` POJO.
+Add validation annotations to the fields of your `ShipmentDetailDto` POJO.
 
-1.  Open `Shipment.java`.
+1.  Open `ShipmentDetailDto.java`.
 2.  Add `@NotBlank` to `destination`.
 3.  Add `@Positive` to `weight`.
 4.  Add `@NotNull` to `status`.
@@ -47,7 +47,9 @@ Add validation annotations to the fields of your `Shipment` POJO.
 Add the `@Valid` annotation to the `POST /shipments` method in your Controller.
 
 ```java
-public Shipment createShipment(@Valid @RequestBody Shipment shipment) { ... }
+import tech.ippon.formation.restapi.shipment.dtos.ShipmentDetailDto;
+
+public Shipment createShipment(@Valid @RequestBody ShipmentDetailDto shipment) { ...}
 ```
 
 #### Task 3: Handle Errors
