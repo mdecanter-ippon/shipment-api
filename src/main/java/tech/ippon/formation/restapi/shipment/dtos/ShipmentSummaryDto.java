@@ -1,5 +1,6 @@
 package tech.ippon.formation.restapi.shipment.dtos;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

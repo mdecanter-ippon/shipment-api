@@ -1,5 +1,6 @@
 package tech.ippon.formation.restapi.shipment.dtos;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,6 +26,7 @@ public class ShipmentDetailDto {
     private String destination;
 
     @JsonProperty("weight_kg")
+    @JsonAlias("weight_lbs") // Accept weight in pounds as well in input
     private Double weight;
 
     @Enumerated(EnumType.STRING)
