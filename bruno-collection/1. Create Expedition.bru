@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/api/v1/expeditions
+  url: http://localhost:8080/api/v1/shipments
   body: json
   auth: none
 }
@@ -19,24 +19,24 @@ body:json {
   }
 }
 
+script:post-response {
+  bru.setVar("newId", res.getBody().expedition_id);
+}
+
 tests {
   test("Response status is 201 Created", function() {
     expect(res.getStatus()).to.equal(201);
   });
-
+  
   test("JSON Contract Check", function() {
     const body = res.getBody();
-
+  
     expect(body.destination_city).to.equal("Marseille");
     expect(body.weight_kg).to.equal(19.5);
-
+  
     expect(body.shipping_date).to.equal("25-12-2023");
-
+  
     expect(body.investigationCode).to.be.undefined;
     expect(body.investigation_code).to.be.undefined;
   });
-}
-
-script:post-response {
-  bru.setVar("newId", res.getBody().expedition_id);
 }
